@@ -29,38 +29,33 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #define MINIMUM_WIN_MEMORY		0x0880000
 #define MAXIMUM_WIN_MEMORY		0x1000000
-
-#define CONSOLE_ERROR_TIMEOUT	60.0	// # of seconds to wait on Sys_Error running
-										//  dedicated before exiting
-#define PAUSE_SLEEP		50				// sleep time on pause or minimization
-#define NOT_FOCUS_SLEEP	20				// sleep time when not focus
+#define CONSOLE_ERROR_TIMEOUT	60.0		// # of seconds to wait on Sys_Error running dedicated before exiting
+#define PAUSE_SLEEP				50			// sleep time on pause or minimization
+#define NOT_FOCUS_SLEEP			20			// sleep time when not focus
+#define	MAX_HANDLES				10
 
 int			starttime;
-qboolean	ActiveApp, Minimized;
+qboolean	ActiveApp;
+qboolean	Minimized;
 qboolean	WinNT;
+qboolean	isDedicated;
+HANDLE		hinput;
+HANDLE 		houtput;
 
+static char			*tracking_tag = "Clams & Mooses";
 static double		pfreq;
 static double		curtime = 0.0;
 static double		lastcurtime = 0.0;
 static int			lowshift;
-qboolean			isDedicated;
 static qboolean		sc_return_on_enter = false;
-HANDLE				hinput, houtput;
+static HANDLE		tevent;
+static HANDLE		hFile;
+static HANDLE		heventParent;
+static HANDLE		heventChild;
 
-static char			*tracking_tag = "Clams & Mooses";
+volatile int	sys_checksum;
 
-static HANDLE	tevent;
-static HANDLE	hFile;
-static HANDLE	heventParent;
-static HANDLE	heventChild;
-
-void MaskExceptions (void);
 void Sys_InitFloatTime (void);
-void Sys_PushFPCW_SetHigh (void);
-void Sys_PopFPCW (void);
-
-volatile int					sys_checksum;
-
 
 /*
 ================
@@ -96,7 +91,6 @@ FILE IO
 ===============================================================================
 */
 
-#define	MAX_HANDLES		10
 FILE	*sys_handles[MAX_HANDLES];
 
 int		findhandle (void)
@@ -271,65 +265,6 @@ void Sys_MakeCodeWriteable (unsigned long startaddr, unsigned long length)
    		Sys_Error("Protection change failed\n");
 }
 
-
-// TODO(MIKE) - I'ved stub assembly patched functions. They should probably be removed
-
-void Sys_SetFPCW (void)
-{
-}
-
-void Sys_PushFPCW_SetHigh (void)
-{
-}
-
-void Sys_PopFPCW (void)
-{
-}
-
-void MaskExceptions (void)
-{
-}
-
-/*
-================
-R_Surf8Patch
-================
-*/
-void R_Surf8Patch()
-{
-	// we only patch code on Intel
-}
-
-
-/*
-================
-R_Surf16Patch
-================
-*/
-void R_Surf16Patch()
-{
-	// we only patch code on Intel
-}
-
-
-/*
-================
-R_SurfacePatch
-================
-*/
-void R_SurfacePatch(void)
-{
-	// we only patch code on Intel
-}
-
-void Sys_HighFPPrecision(void)
-{
-}
-
-void Sys_LowFPPrecision(void)
-{
-}
-
 /*
 ================
 Sys_Init
@@ -340,9 +275,6 @@ void Sys_Init (void)
 	LARGE_INTEGER	PerformanceFreq;
 	unsigned int	lowpart, highpart;
 	OSVERSIONINFO	vinfo;
-
-	MaskExceptions ();
-	Sys_SetFPCW ();
 
 	if (!QueryPerformanceFrequency (&PerformanceFreq))
 		Sys_Error ("No hardware timer available");
@@ -513,8 +445,6 @@ double Sys_FloatTime (void)
 	unsigned int		temp, t2;
 	double				time;
 
-	Sys_PushFPCW_SetHigh ();
-
 	QueryPerformanceCounter (&PerformanceCount);
 
 	temp = ((unsigned int)PerformanceCount.LowPart >> lowshift) |
@@ -559,8 +489,6 @@ double Sys_FloatTime (void)
 			lastcurtime = curtime;
 		}
 	}
-
-	Sys_PopFPCW ();
 
     return curtime;
 }
