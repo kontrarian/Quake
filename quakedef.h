@@ -1,10 +1,9 @@
 // quakedef.h -- primary header for client
 
-//#define	GLTEST				// experimental stuff
-//#define	PARANOID			// speed sapping error checking
+//#define	PARANOID				// speed sapping error checking
 
-#define	QUAKE_GAME				// as opposed to utilities
-#define	GAMENAME	"id1"		// directory to look in by default
+#define	QUAKE_GAME					// as opposed to utilities
+#define	GAMENAME			"id1"	// directory to look in by default
 #define	VERSION				1.09
 #define	GLQUAKE_VERSION		1.00
 #define	D3DQUAKE_VERSION	0.01
@@ -58,15 +57,9 @@
 
 #define MAX_NUM_ARGVS	50
 
-// up / down
-#define	PITCH	0
-
-// left / right
-#define	YAW		1
-
-// fall over
-#define	ROLL	2
-
+#define	PITCH	0					// up / down
+#define	YAW		1 					// left / right
+#define	ROLL	2 					// fall over
 
 #define	MAX_QPATH		64			// max length of a quake game pathname
 #define	MAX_OSPATH		128			// max length of a filesystem pathname
@@ -179,10 +172,7 @@
 #define	MAX_SCOREBOARDNAME	32
 
 #define	SOUND_CHANNELS		8
-
-// This makes anyone on id's net privileged
-// Use for multiplayer testing only - VERY dangerous!!!
-// #define IDGODS
+// #define IDGODS	// This makes anyone on id's net privileged. Use for multiplayer testing only - VERY dangerous!!!
 
 #include "common.h"
 #include "bspfile.h"
@@ -216,14 +206,8 @@ typedef struct
 #include "client.h"
 #include "progs.h"
 #include "server.h"
-
-#ifdef GLQUAKE
-#include "gl_model.h"
-#else
 #include "model.h"
 #include "d_iface.h"
-#endif
-
 #include "input.h"
 #include "world.h"
 #include "keys.h"
@@ -232,10 +216,6 @@ typedef struct
 #include "menu.h"
 #include "crc.h"
 #include "cdaudio.h"
-
-#ifdef GLQUAKE
-#include "glquake.h"
-#endif
 
 //=============================================================================
 
@@ -256,15 +236,9 @@ typedef struct
 
 //=============================================================================
 
-
-
 extern qboolean noclip_anglehack;
 
-
-//
-// host
-//
-extern	quakeparms_t host_parms;
+extern	quakeparms_t host_parms;			// host
 
 extern	cvar_t		sys_ticrate;
 extern	cvar_t		sys_nostdout;
@@ -274,9 +248,8 @@ extern	qboolean	host_initialized;		// true if into command execution
 extern	double		host_frametime;
 extern	byte		*host_basepal;
 extern	byte		*host_colormap;
-extern	int			host_framecount;	// incremented every frame, never reset
-extern	double		realtime;			// not bounded in any way, changed at
-										// start of every frame, never reset
+extern	int			host_framecount;		// incremented every frame, never reset
+extern	double		realtime;				// not bounded in any way, changed at start of every frame, never reset
 
 void Host_ClearMemory (void);
 void Host_ServerFrame (void);
@@ -290,20 +263,12 @@ void Host_Quit_f (void);
 void Host_ClientCommands (char *fmt, ...);
 void Host_ShutdownServer (qboolean crash);
 
-extern qboolean		msg_suppress_1;		// suppresses resolution and cache size console output
-										//  an fullscreen DIB focus gain/loss
-extern int			current_skill;		// skill level for currently loaded level (in case
-										//  the user changes the cvar while the level is
-										//  running, this reflects the level actually in use)
-
+extern qboolean		msg_suppress_1;		// suppresses resolution and cache size console output an fullscreen DIB focus gain/loss
 extern qboolean		isDedicated;
-
+extern int			current_skill;		// skill level for currently loaded level (in case the user changes the cvar while the level is running, this reflects the level actually in use)
 extern int			minimum_memory;
 
-//
-// chase
-//
-extern	cvar_t	chase_active;
+extern cvar_t		chase_active;			// chase
 
 void Chase_Init (void);
 void Chase_Reset (void);
