@@ -1,42 +1,16 @@
-/*
-Copyright (C) 1996-1997 Id Software, Inc.
-
-This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License
-as published by the Free Software Foundation; either version 2
-of the License, or (at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
-
-See the GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-
-*/
 // quakedef.h -- primary header for client
 
-//#define	GLTEST			// experimental stuff
+//#define	GLTEST				// experimental stuff
+//#define	PARANOID			// speed sapping error checking
 
-#define	QUAKE_GAME			// as opposed to utilities
-
+#define	QUAKE_GAME				// as opposed to utilities
+#define	GAMENAME	"id1"		// directory to look in by default
 #define	VERSION				1.09
 #define	GLQUAKE_VERSION		1.00
 #define	D3DQUAKE_VERSION	0.01
 #define	WINQUAKE_VERSION	0.996
 #define	LINUX_VERSION		1.30
 #define	X11_VERSION			1.10
-
-//define	PARANOID			// speed sapping error checking
-
-#ifdef QUAKE2
-#define	GAMENAME	"id1"		// directory to look in by default
-#else
-#define	GAMENAME	"id1"
-#endif
 
 #include <math.h>
 #include <string.h>
@@ -47,25 +21,25 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #if defined(_WIN32) && !defined(WINDED)
 
-#if defined(_M_IX86)
-#define __i386__	1
-#endif
+	#if defined(_M_IX86)
+		#define __i386__	1
+	#endif
 
-void	VID_LockBuffer (void);
-void	VID_UnlockBuffer (void);
+	void	VID_LockBuffer (void);
+	void	VID_UnlockBuffer (void);
 
 #else
 
-#define	VID_LockBuffer()
-#define	VID_UnlockBuffer()
+	#define	VID_LockBuffer()
+	#define	VID_UnlockBuffer()
 
 #endif
 
 // TODO(Mike) - Investigate this
-#if defined __i386__ // && !defined __sun__
-#define id386	0
+#if defined __i386__
+	#define id386	0
 #else
-#define id386	0
+	#define id386	0
 #endif
 
 #if id386
