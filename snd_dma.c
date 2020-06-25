@@ -20,10 +20,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // snd_dma.c -- main control for any streaming sound output device
 
 #include "quakedef.h"
-
-#ifdef _WIN32
 #include "winquake.h"
-#endif
+
 
 void S_Play(void);
 void S_PlayVol(void);
@@ -148,9 +146,6 @@ void S_Startup (void)
 
 		if (!rc)
 		{
-#ifndef	_WIN32
-			Con_Printf("S_Startup: SNDDMA_Init failed.\n");
-#endif
 			sound_started = 0;
 			return;
 		}
@@ -561,11 +556,7 @@ void S_ClearBuffer (void)
 {
 	int		clear;
 		
-#ifdef _WIN32
 	if (!sound_started || !shm || (!shm->buffer && !pDSBuf))
-#else
-	if (!sound_started || !shm || !shm->buffer)
-#endif
 		return;
 
 	if (shm->samplebits == 8)
@@ -573,7 +564,6 @@ void S_ClearBuffer (void)
 	else
 		clear = 0;
 
-#ifdef _WIN32
 	if (pDSBuf)
 	{
 		DWORD	dwSize;
@@ -606,7 +596,6 @@ void S_ClearBuffer (void)
 	
 	}
 	else
-#endif
 	{
 		Q_memset(shm->buffer, clear, shm->samples * shm->samplebits/8);
 	}
@@ -819,9 +808,6 @@ void GetSoundtime(void)
 
 // it is possible to miscount buffers if it has wrapped twice between
 // calls to S_Update.  Oh well.
-#ifdef __sun__
-	soundtime = SNDDMA_GetSamples();
-#else
 	samplepos = SNDDMA_GetDMAPos();
 
 
@@ -839,15 +825,12 @@ void GetSoundtime(void)
 	oldsamplepos = samplepos;
 
 	soundtime = buffers*fullsamples + samplepos/shm->channels;
-#endif
 }
 
 void S_ExtraUpdate (void)
 {
 
-#ifdef _WIN32
 	IN_Accumulate ();
-#endif
 
 	if (snd_noextraupdate.value)
 		return;		// don't pollute timings
@@ -878,7 +861,6 @@ void S_Update_(void)
 	if (endtime - soundtime > samps)
 		endtime = soundtime + samps;
 
-#ifdef _WIN32
 // if the buffer was lost or stopped, restore it and/or restart it
 	{
 		DWORD	dwStatus;
@@ -895,7 +877,6 @@ void S_Update_(void)
 				pDSBuf->lpVtbl->Play(pDSBuf, 0, 0, DSBPLAY_LOOPING);
 		}
 	}
-#endif
 
 	S_PaintChannels (endtime);
 

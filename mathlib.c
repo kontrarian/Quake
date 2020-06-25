@@ -85,10 +85,8 @@ void PerpendicularVector( vec3_t dst, const vec3_t src )
 	VectorNormalize( dst );
 }
 
-#ifdef _WIN32
+// Note(Mike) - this was win32 specific. Find out what it does
 #pragma optimize( "", off )
-#endif
-
 
 void RotatePointAroundVector( vec3_t dst, const vec3_t dir, const vec3_t point, float degrees )
 {
@@ -145,9 +143,8 @@ void RotatePointAroundVector( vec3_t dst, const vec3_t dir, const vec3_t point, 
 	}
 }
 
-#ifdef _WIN32
+// Note(Mike) - this was win32 specific. Find out what it does
 #pragma optimize( "", on )
-#endif
 
 /*-----------------------------------------------------------------*/
 
